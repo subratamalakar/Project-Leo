@@ -527,4 +527,4 @@ All contributions are welcome.
 
 ---
 
-*Made with ❤️ — Project Leo v1.0*
+*Made with ❤️ — Subrata Malakar*
