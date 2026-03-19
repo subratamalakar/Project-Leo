@@ -522,6 +522,7 @@ Found a bug? Have a feature idea? Want to improve the code?
 
 - Open an **Issue** to report a bug or suggest a feature
 - Open a **Pull Request** to contribute code
+- **Contact** with [**me**](https://subrcz.xo.je/)
 
 All contributions are welcome.
 
