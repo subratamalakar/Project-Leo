@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Project Leo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+</head>
+
+<body>
+
+  <!-- Header -->
+  <div class="hdr">
+    <div class="logo">&#129409; Project <span>Leo</span></div>
+    <div class="badge">
+      <div class="dot"></div><span id="dn">Connecting...</span>
+    </div>
+  </div>
+
+  <!-- Breadcrumb -->
+  <div class="bread" id="bread"></div>
+
+  <!-- Selection bar -->
+  <div class="selbar" id="selbar">
+    <span class="selbar-info">
+      <i class="bi bi-check2-circle"></i>
+      <span id="sel-count">0</span> selected
+    </span>
+    <div class="selbar-actions">
+      <button class="sbar-btn blue" onclick="selectAll()" title="Select All"><i class="bi bi-check2-all"></i></button>
+      <div class="sbar-divider"></div>
+      <button class="sbar-btn green" onclick="bulkDownload()" title="Download as ZIP"><i
+          class="bi bi-download"></i></button>
+      <button class="sbar-btn orange" onclick="showMoveModal()" title="Move"><i
+          class="bi bi-folder-symlink"></i></button>
+      <button class="sbar-btn red" onclick="bulkDelete()" title="Delete"><i class="bi bi-trash3"></i></button>
+      <div class="sbar-divider"></div>
+      <button class="sbar-btn muted" onclick="clearSelection()" title="Cancel"><i class="bi bi-x-lg"></i></button>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="bar">
+    <button class="btn pri" onclick="toggleUp()"><i class="bi bi-cloud-upload"></i> Upload</button>
+    <button class="btn" onclick="showMk()"><i class="bi bi-folder-plus"></i> Folder</button>
+    <button class="btn" onclick="goUp()"><i class="bi bi-arrow-up-circle"></i> Up</button>
+    <button class="btn ico" id="sel-btn" onclick="toggleSelMode()" title="Select mode"><i
+        class="bi bi-ui-checks"></i></button>
+    <button class="btn ico" onclick="reload()" title="Refresh"><i class="bi bi-arrow-clockwise"></i></button>
+    <div class="srch"><i class="bi bi-search"></i><input id="sqi" placeholder="Search..." oninput="filter()"></div>
+  </div>
+
+  <!-- Upload zone -->
+  <div class="upz" id="upz" ondragover="event.preventDefault();this.classList.add('ov')"
+    ondragleave="this.classList.remove('ov')" ondrop="dropF(event)">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:4px"><button onclick="toggleUp()" class="upz-close"
+        title="Close upload zone"><i class="bi bi-x-lg"></i></button></div>
+    <i class="bi bi-cloud-arrow-up upz-icon"></i>
+    <div class="upz-text">Drag &amp; drop files or folders here</div>
+    <div class="upz-btns">
+      <label class="upz-btn">
+        <i class="bi bi-file-earmark-arrow-up"></i> Browse Files
+        <input type="file" multiple onchange="upFilesInput(this)">
+      </label>
+      <label class="upz-btn">
+        <i class="bi bi-folder-fill"></i> Browse Folder
+        <input type="file" webkitdirectory onchange="upFilesInput(this)">
+      </label>
+    </div>
+    <div class="upz-hint"><i class="bi bi-info-circle"></i> You can upload entire folders!</div>
+  </div>
+
+  <!-- File grid -->
+  <div id="page">
+    <div class="area">
+      <div class="grid" id="grid"></div>
+    </div>
+    <div class="stbar"><i class="bi bi-hdd"></i><span id="st-txt"></span></div>
+    <div id="disk-bar"></div>
+    <!-- Logout button — bottom of page -->
+    <div class="logout-row">
+      <button class="logout-full-btn" onclick="logout()">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Context menu SINGLE -->
+  <div class="ctx" id="ctx">
+    <div class="ci" id="ctx-view" onclick="cView()"><i class="bi bi-eye"></i> View</div>
+    <div class="ci" onclick="cDl()"><i class="bi bi-download"></i> Download</div>
+    <div class="ctx-sep"></div>
+    <div class="ci" id="ctx-rename" onclick="cRename()"><i class="bi bi-pencil-square"></i> Rename</div>
+    <div class="ci" onclick="cMove()"><i class="bi bi-folder-symlink"></i> Move to...</div>
+    <div class="ci" onclick="cSel()"><i class="bi bi-check2-square"></i> Select</div>
+    <div class="ctx-sep"></div>
+    <div class="ci dan" onclick="cDel()"><i class="bi bi-trash3"></i> Delete</div>
+  </div>
+
+  <!-- Context menu MULTI -->
+  <div class="ctx" id="ctx-multi">
+    <div class="ci" style="color:var(--mut);font-size:11px;padding:6px 13px 2px;cursor:default">
+      <i class="bi bi-check2-all"></i> <span id="ctx-multi-count">0</span> items selected
+    </div>
+    <div class="ctx-sep"></div>
+    <div class="ci" onclick="bulkDownload()"><i class="bi bi-download"></i> Download as ZIP</div>
+    <div class="ci" onclick="showMoveModal();hCtxMulti()"><i class="bi bi-folder-symlink"></i> Move to...</div>
+    <div class="ctx-sep"></div>
+    <div class="ci dan" onclick="bulkDelete();hCtxMulti()"><i class="bi bi-trash3"></i> Delete All</div>
+  </div>
+
+  <!-- New folder modal -->
+  <div class="ov-bg" id="mkov">
+    <div class="modal">
+      <h3><i class="bi bi-folder-plus"></i> New Folder</h3>
+      <input id="fn" placeholder="Folder name..." onkeydown="if(event.key==='Enter')mkDir()">
+      <div class="ma">
+        <button class="btn" onclick="closeMk()"><i class="bi bi-x"></i> Cancel</button>
+        <button class="btn pri" onclick="mkDir()"><i class="bi bi-check2"></i> Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rename modal -->
+  <div class="ov-bg" id="rnov">
+    <div class="modal">
+      <h3><i class="bi bi-pencil-square"></i> Rename</h3>
+      <input id="rn-input" onkeydown="if(event.key==='Enter')doRename()">
+      <div class="ma">
+        <button class="btn" onclick="closeRename()"><i class="bi bi-x"></i> Cancel</button>
+        <button class="btn pri" onclick="doRename()"><i class="bi bi-check2"></i> Rename</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Move modal — with search + new folder -->
+  <div class="ov-bg" id="moveov">
+    <div class="modal" style="max-width:390px">
+      <h3><i class="bi bi-folder-symlink"></i> Move To</h3>
+      <div class="modal-note"><i class="bi bi-map-pin"></i><span id="move-cur-path"
+          style="color:var(--acc);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px">Root</span>
+      </div>
+      <!-- Search bar -->
+      <div class="move-search-row">
+        <div class="move-srch"><i class="bi bi-search"></i><input id="move-search" placeholder="Search folders..."
+            oninput="filterMoveList()"></div>
+      </div>
+      <!-- Folder list -->
+      <div id="move-list"></div>
+      <!-- New folder row -->
+      <div class="move-new-row">
+        <div class="move-new-inp"><i class="bi bi-folder-plus" style="color:var(--acc)"></i><input id="move-new-folder"
+            placeholder="Make new folder..." onkeydown="if(event.key==='Enter')mkDirInMove()"></div>
+        <button class="btn ico" onclick="mkDirInMove()" title="Create folder"><i class="bi bi-check2"></i></button>
+      </div>
+      <div class="ma" style="margin-top:12px">
+        <button class="btn" onclick="closeMoveModal()"><i class="bi bi-x"></i> Cancel</button>
+        <button class="btn pri" onclick="doMove()"><i class="bi bi-check2"></i> Move Here</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Viewer -->
+  <div id="viewer">
+    <div id="vhdr">
+      <i id="vico" class="bi bi-file-earmark"></i>
+      <span id="vtitle"></span>
+      <div id="vacts">
+        <button class="btn ico" onclick="viewerDl()"><i class="bi bi-download"></i></button>
+        <button class="btn ico" onclick="closeViewer()"><i class="bi bi-x-lg"></i></button>
+      </div>
+    </div>
+    <div id="vbody"></div>
+  </div>
+
+  <!-- Download / Zip progress bar -->
+  <div id="dprog">
+    <div class="dprog-inner">
+      <div class="dprog-left">
+        <div class="dprog-hdr">
+          <i id="dprog-ico" class="bi bi-arrow-repeat dprog-spin"></i>
+          <span id="dprog-msg">Zipping...</span>
+          <span id="dprog-pct">0%</span>
+        </div>
+        <div class="dprog-bar-wrap"><div class="dprog-fill" id="dprog-fill"></div></div>
+        <div id="dprog-sub">⚠ Don't refresh or close the tab</div>
+      </div>
+      <button id="dprog-cancel" onclick="cancelZipDownload()" title="Cancel" style="display:none">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Upload progress — bottom bar, clean & stylish -->
+  <div id="uprog">
+    <div class="uprog-hdr">
+      <span id="uprog-msg">Uploading...</span>
+      <span id="uprog-pct">0%</span>
+      <button id="uprog-cancel" onclick="cancelUpload()" title="Cancel upload">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="upbar">
+      <div class="upfill" id="upfill"></div>
+    </div>
+    <div id="uprog-done">
+      <i class="bi bi-check-circle-fill"></i>
+      <span id="uprog-done-msg"></span>
+    </div>
+  </div>
+
+  <!-- Offline banner -->
+  <div id="offline-banner">
+    <i class="bi bi-wifi-off"></i>
+    <span>Connection lost — Project Leo server stopped. Reload when restarted.</span>
+    <button onclick="location.reload()"><i class="bi bi-arrow-clockwise"></i> Retry</button>
+  </div>
+
+  <!-- Toasts -->
+  <div class="tc" id="tc"></div>
+
+  <script src="/app.js"></script>
+</body>
+
+</html>

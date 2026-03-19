@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <title>Project Leo — Sign In</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0d0f;
+            --sur: #141416;
+            --sur2: #1c1c20;
+            --bor: #2a2a30;
+            --acc: #f5a623;
+            --acc2: #ff6b35;
+            --txt: #f0f0f0;
+            --mut: #666;
+            --dan: #ff4757;
+            --ok: #2ed573;
+            --sel-bor: #3b82f6;
+            --tr: cubic-bezier(.4, 0, .2, 1);
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--txt);
+            font-family: 'Syne', Arial, sans-serif;
+            min-height: 100%;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            overflow-x: hidden;
+            position: relative
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(245, 166, 35, .04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(245, 166, 35, .04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -55%);
+            width: min(600px, 90vw);
+            height: min(600px, 90vw);
+            background: radial-gradient(circle, rgba(245, 166, 35, .09) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0
+        }
+
+        .card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            background: var(--sur);
+            border: 1px solid var(--bor);
+            border-radius: 20px;
+            padding: 36px 32px 32px;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, .7), 0 0 0 1px rgba(245, 166, 35, .08);
+            animation: cardIn .4s var(--tr) both
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(.97)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .logo-row {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 22px
+        }
+
+        .logo-icon {
+            font-size: 48px;
+            line-height: 1;
+            animation: lionPulse 3s ease-in-out infinite
+        }
+
+        @keyframes lionPulse {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 16px rgba(245, 166, 35, .35))
+            }
+
+            50% {
+                filter: drop-shadow(0 0 30px rgba(245, 166, 35, .7))
+            }
+        }
+
+        .logo-name {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -.5px
+        }
+
+        .logo-name span {
+            color: var(--acc)
+        }
+
+        .logo-sub {
+            font-size: 10px;
+            font-family: 'DM Mono', monospace;
+            color: var(--mut);
+            letter-spacing: .5px;
+            text-transform: uppercase
+        }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(46, 213, 115, .07);
+            border: 1px solid rgba(46, 213, 115, .18);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-family: 'DM Mono', monospace;
+            color: var(--ok);
+            margin-bottom: 20px
+        }
+
+        .secure-badge i {
+            font-size: 12px;
+            flex-shrink: 0
+        }
+
+        .field {
+            margin-bottom: 12px
+        }
+
+        .field label {
+            display: block;
+            font-size: 10px;
+            font-family: 'DM Mono', monospace;
+            color: var(--mut);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 5px
+        }
+
+        .field-wrap {
+            display: flex;
+            align-items: center;
+            background: var(--sur2);
+            border: 1.5px solid var(--bor);
+            border-radius: 10px;
+            padding: 0 13px;
+            gap: 9px;
+            transition: border-color .2s, box-shadow .2s;
+            height: 46px
+        }
+
+        .field-wrap:focus-within {
+            border-color: var(--acc);
+            box-shadow: 0 0 0 3px rgba(245, 166, 35, .12)
+        }
+
+        .field-wrap.error {
+            border-color: var(--dan);
+            box-shadow: 0 0 0 3px rgba(255, 71, 87, .12)
+        }
+
+        .field-wrap i.fi {
+            font-size: 14px;
+            color: var(--mut);
+            flex-shrink: 0;
+            transition: color .2s
+        }
+
+        .field-wrap:focus-within i.fi {
+            color: var(--acc)
+        }
+
+        .field-wrap input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--txt);
+            font-family: 'DM Mono', monospace;
+            font-size: 14px;
+            height: 100%;
+            min-width: 0;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .field-wrap input::placeholder {
+            color: var(--mut)
+        }
+
+        .toggle-pw {
+            background: none;
+            border: none;
+            color: var(--mut);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            transition: color .15s;
+            flex-shrink: 0;
+        }
+
+        .toggle-pw:hover {
+            color: var(--txt)
+        }
+
+        .remember-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 16px 0 20px;
+            cursor: pointer;
+            user-select: none
+        }
+
+        .remember-row input[type=checkbox] {
+            display: none
+        }
+
+        .chk-box {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            border: 1.5px solid var(--bor);
+            border-radius: 6px;
+            background: var(--sur2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all .15s;
+            margin-top: 1px
+        }
+
+        .chk-box i {
+            font-size: 12px;
+            color: var(--acc);
+            opacity: 0;
+            transition: opacity .15s
+        }
+
+        .remember-row input:checked~.chk-box {
+            border-color: var(--acc);
+            background: rgba(245, 166, 35, .15)
+        }
+
+        .remember-row input:checked~.chk-box i {
+            opacity: 1
+        }
+
+        .remember-label {
+            font-size: 12px;
+            color: var(--mut);
+            line-height: 1.4;
+            cursor: pointer;
+        }
+
+        .remember-label strong {
+            color: var(--txt);
+            font-weight: 600
+        }
+
+        .submit-btn {
+            width: 100%;
+            height: 48px;
+            background: linear-gradient(135deg, var(--acc), var(--acc2));
+            border: none;
+            border-radius: 12px;
+            color: #0d0d0f;
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: .3px;
+            transition: all .18s var(--tr);
+            box-shadow: 0 4px 20px rgba(245, 166, 35, .3);
+            appearance: none;
+            -webkit-appearance: none;
+            touch-action: manipulation;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 28px rgba(245, 166, 35, .45)
+        }
+
+        .submit-btn:active {
+            transform: scale(.97)
+        }
+
+        .submit-btn:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 8px rgba(245, 166, 35, .15)
+        }
+
+        .spin {
+            animation: spinA .7s linear infinite;
+            display: inline-block
+        }
+
+        @keyframes spinA {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .err-msg {
+            display: none;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255, 71, 87, .08);
+            border: 1px solid rgba(255, 71, 87, .25);
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 11.5px;
+            font-family: 'DM Mono', monospace;
+            color: var(--dan);
+            margin-bottom: 12px;
+            animation: errIn .2s var(--tr)
+        }
+
+        @keyframes errIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .err-msg.show {
+            display: flex
+        }
+
+        .err-msg i {
+            font-size: 13px;
+            flex-shrink: 0
+        }
+
+        .card-footer {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 10px;
+            font-family: 'DM Mono', monospace;
+            color: var(--mut);
+            opacity: .55;
+            line-height: 1.5
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0)
+            }
+
+            15% {
+                transform: translateX(-7px)
+            }
+
+            35% {
+                transform: translateX(7px)
+            }
+
+            55% {
+                transform: translateX(-4px)
+            }
+
+            75% {
+                transform: translateX(4px)
+            }
+
+            90% {
+                transform: translateX(-2px)
+            }
+        }
+
+        .shake {
+            animation: shake .42s cubic-bezier(.36, .07, .19, .97) both
+        }
+
+        /* ── Responsive breakpoints ── */
+        /* Tablet / small desktop */
+        @media(max-width:480px) {
+            body {
+                padding: 12px
+            }
+
+            .card {
+                padding: 28px 20px 24px;
+                border-radius: 16px
+            }
+
+            .logo-icon {
+                font-size: 42px
+            }
+
+            .logo-name {
+                font-size: 22px
+            }
+        }
+
+        /* Large phones */
+        @media(max-width:390px) {
+            .card {
+                padding: 24px 16px 20px;
+                border-radius: 14px
+            }
+
+            .logo-icon {
+                font-size: 38px
+            }
+
+            .logo-name {
+                font-size: 20px
+            }
+
+            .field-wrap {
+                height: 44px
+            }
+
+            .submit-btn {
+                height: 46px;
+                font-size: 13px
+            }
+        }
+
+        /* Small phones (SE, etc.) */
+        @media(max-width:320px) {
+            body {
+                padding: 8px
+            }
+
+            .card {
+                padding: 20px 14px 18px;
+                border-radius: 12px
+            }
+
+            .logo-icon {
+                font-size: 34px
+            }
+
+            .logo-name {
+                font-size: 18px
+            }
+
+            .logo-sub {
+                font-size: 9px
+            }
+
+            .secure-badge {
+                font-size: 10px;
+                padding: 5px 10px
+            }
+
+            .field-wrap {
+                height: 42px;
+                padding: 0 10px
+            }
+
+            .field-wrap input {
+                font-size: 13px
+            }
+
+            .submit-btn {
+                height: 44px;
+                font-size: 13px
+            }
+
+            .remember-label {
+                font-size: 11px
+            }
+        }
+
+        /* Very short screens (landscape phones) */
+        @media(max-height:600px) {
+            body {
+                justify-content: flex-start;
+                padding-top: 12px;
+                padding-bottom: 12px
+            }
+
+            .logo-row {
+                margin-bottom: 12px;
+                gap: 4px
+            }
+
+            .logo-icon {
+                font-size: 32px
+            }
+
+            .secure-badge {
+                margin-bottom: 12px;
+                padding: 5px 10px
+            }
+
+            .field {
+                margin-bottom: 8px
+            }
+
+            .remember-row {
+                margin: 10px 0 14px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card" id="card">
+        <div class="logo-row">
+            <div class="logo-icon">🦁</div>
+            <div class="logo-name">Project <span>Leo</span></div>
+            <div class="logo-sub">Local Network File Manager</div>
+        </div>
+
+        <div class="secure-badge">
+            <i class="bi bi-shield-lock-fill"></i>
+            <span>Protected — Sign in to continue</span>
+        </div>
+
+        <div class="err-msg" id="err-msg">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span id="err-text">Invalid username or password.</span>
+        </div>
+
+        <form id="form" onsubmit="doLogin(event)">
+            <div class="field">
+                <label for="inp-u">Username</label>
+                <div class="field-wrap" id="wrap-u">
+                    <i class="bi bi-person-fill fi"></i>
+                    <input id="inp-u" type="text" placeholder="Enter username" autocomplete="username" autocorrect="off"
+                        autocapitalize="off" spellcheck="false" required>
+                </div>
+            </div>
+            <div class="field">
+                <label for="inp-p">Password</label>
+                <div class="field-wrap" id="wrap-p">
+                    <i class="bi bi-lock-fill fi"></i>
+                    <input id="inp-p" type="password" placeholder="Enter password" autocomplete="current-password"
+                        required>
+                    <button type="button" class="toggle-pw" onclick="togglePw()">
+                        <i class="bi bi-eye" id="eye-icon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="remember-row" onclick="document.getElementById('chk-rem').click()">
+                <input type="checkbox" id="chk-rem">
+                <div class="chk-box"><i class="bi bi-check2"></i></div>
+                <label for="chk-rem" class="remember-label" onclick="event.preventDefault()">
+                    <strong>Remember me</strong> — stay signed in this session
+                </label>
+            </div>
+
+            <button type="submit" class="submit-btn" id="btn">
+                <i class="bi bi-box-arrow-in-right" id="btn-ico"></i>
+                <span id="btn-txt">Sign In</span>
+            </button>
+        </form>
+
+        <div class="card-footer">
+            🔐 IP-bound session &nbsp;·&nbsp; Credentials set at startup
+        </div>
+    </div>
+
+    <script>
+        window.onload = function () {
+            // Only auto-focus on desktop (mouse/trackpad) — prevents keyboard popup on mobile
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                document.getElementById("inp-u").focus();
+            }
+        };
+
+        function togglePw() {
+            var i = document.getElementById("inp-p"), ic = document.getElementById("eye-icon");
+            i.type = i.type === "password" ? "text" : "password";
+            ic.className = i.type === "password" ? "bi bi-eye" : "bi bi-eye-slash";
+        }
+
+        function showErr(msg) {
+            var el = document.getElementById("err-msg");
+            document.getElementById("err-text").textContent = msg;
+            el.classList.add("show");
+            var c = document.getElementById("card");
+            c.classList.remove("shake"); void c.offsetWidth; c.classList.add("shake");
+            document.getElementById("wrap-u").classList.add("error");
+            document.getElementById("wrap-p").classList.add("error");
+        }
+        function clearErr() {
+            document.getElementById("err-msg").classList.remove("show");
+            document.getElementById("wrap-u").classList.remove("error");
+            document.getElementById("wrap-p").classList.remove("error");
+        }
+        function setLoading(on) {
+            var btn = document.getElementById("btn");
+            var ico = document.getElementById("btn-ico");
+            var txt = document.getElementById("btn-txt");
+            btn.disabled = on;
+            if (on) { ico.className = "bi bi-arrow-repeat spin"; txt.textContent = "Signing in..."; }
+            else { ico.className = "bi bi-box-arrow-in-right"; txt.textContent = "Sign In"; }
+        }
+
+        async function doLogin(e) {
+            e.preventDefault(); clearErr();
+            var u = document.getElementById("inp-u").value.trim();
+            var p = document.getElementById("inp-p").value;
+            var rem = document.getElementById("chk-rem").checked;
+            if (!u || !p) { showErr("Please fill in all fields."); return; }
+            setLoading(true);
+            try {
+                var res = await fetch("/api/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: u, password: p, remember: rem })
+                });
+                var d = await res.json();
+                if (d.success && d.token) {
+                    sessionStorage.setItem("leo_token", d.token);
+                    // Success flash
+                    var btn = document.getElementById("btn");
+                    btn.style.background = "linear-gradient(135deg,#2ed573,#26c45e)";
+                    btn.style.boxShadow = "0 4px 20px rgba(46,213,115,.4)";
+                    document.getElementById("btn-ico").className = "bi bi-check2-circle";
+                    document.getElementById("btn-txt").textContent = "Welcome!";
+                    setTimeout(function () { location.href = "/"; }, 500);
+                } else {
+                    setLoading(false);
+                    showErr(d.error || "Invalid username or password.");
+                }
+            } catch (err) {
+                setLoading(false);
+                showErr("Cannot reach server. Is Project Leo running?");
+            }
+        }
+
+        document.getElementById("inp-u").addEventListener("input", clearErr);
+        document.getElementById("inp-p").addEventListener("input", clearErr);
+    </script>
+</body>
+
+</html>
